@@ -1,3 +1,7 @@
+## [1.1.2] 
+
+* update dependencies
+
 ## [1.1.1] 
 
 * fix hashCode calculation for gpx types
