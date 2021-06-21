@@ -21,7 +21,7 @@ class GpxWriter {
     final builder = XmlBuilder();
 
     builder.processing('xml', 'version="1.0" encoding="UTF-8"');
-    builder.element(GpxTagV11.gpx, nest: () {
+    builder.element(GpxTagV11.gpx, namespaces: {'http://www.topografix.com/GPX/1/1':''}, nest: () {
       builder.attribute(GpxTagV11.version, gpx.version);
       builder.attribute(GpxTagV11.creator, gpx.creator);
 
