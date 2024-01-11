@@ -439,9 +439,11 @@ class GpxReader {
     final elm = iterator.current;
 
     if (elm is XmlStartElementEvent) {
-      link.href = elm.attributes
-          .firstWhere((attr) => attr.name == GpxTagV11.href)
-          .value;
+      final hrefs = elm.attributes.where((attr) => attr.name == GpxTagV11.href);
+
+      if (hrefs.isNotEmpty) {
+        link.href = hrefs.first.value;
+      }
     }
 
     if ((elm is XmlStartElementEvent) && !elm.isSelfClosing) {
