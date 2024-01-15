@@ -25,5 +25,4 @@ class KmlTagV22 {
   static const when = 'when';
 
   // <altitudeMode>absolute</altitudeMode>
-
 }

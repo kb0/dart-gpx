@@ -1,3 +1,8 @@
+## [2.2.2]
+
+* fix no-element exception when href is absent
+* update lints
+
 ## [2.2.1]
 
 * fixed missed symbol during writing
