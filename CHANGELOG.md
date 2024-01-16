@@ -1,6 +1,8 @@
 ## [2.2.2]
 
 * fix no-element exception when href is absent
+* update Dart SDK to 2.19 or later
+* update XML to 6.3.0
 
 ## [2.2.1]
 
