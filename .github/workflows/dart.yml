@@ -3,11 +3,11 @@ name: Dart Package
 on:
   push:
     branches:
-      - master,
+      - 'master'
       - 'release/**'
   pull_request:
     branches:
-      - master
+      - 'master'
 
 jobs:
   build:
