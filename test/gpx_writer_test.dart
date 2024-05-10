@@ -76,4 +76,19 @@ void main() {
 
     expectXml(GpxWriter().asString(gpx, pretty: true), xml);
   });
+
+  test('write custom namespaces', () async {
+    final gpx = createMinimalGPX();
+    gpx.wpts = [
+      Wpt(lat: 1, lon: 1, fix: FixType.fix_2d),
+      Wpt(lat: 1, lon: 1, fix: FixType.fix_3d),
+      Wpt(lat: 1, lon: 1, fix: FixType.none)
+    ];
+    final xml = await File('test/assets/namespace.gpx').readAsString();
+
+    final gpxXml = GpxWriter().asXml(gpx);
+    gpxXml.children[1].setAttribute("xmlns:trp", "http://www.garmin.com/xmlschemas/TripExtensions/v1");
+    gpxXml.children[1].setAttribute("xsi:schemaLocation", "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
+    expectXml(gpxXml.toXmlString(), xml);
+  });
 }
