@@ -1,3 +1,7 @@
+## [2.3.0]
+
+* update extensions to nested maps structure
+
 ## [2.2.2]
 
 * fix no-element exception when href is absent
