@@ -31,7 +31,7 @@ class Rte {
 
   /// You can add extend GPX by adding your own elements from another schema
   /// here.
-  Map<String, String> extensions;
+  Map<String, Object> extensions;
 
   /// A list of route points.
   List<Wpt> rtepts;
@@ -45,10 +45,10 @@ class Rte {
       List<Link>? links,
       this.number,
       this.type,
-      Map<String, String>? extensions,
+      Map<String, Object>? extensions,
       List<Wpt>? rtepts})
       : links = links ?? [],
-        extensions = extensions ?? <String, String>{},
+        extensions = extensions ?? <String, Object>{},
         rtepts = rtepts ?? [];
 
   @override
@@ -62,7 +62,7 @@ class Rte {
           const ListEquality().equals(other.links, links) &&
           other.number == number &&
           other.type == type &&
-          const MapEquality().equals(other.extensions, extensions) &&
+          const DeepCollectionEquality().equals(other.extensions, extensions) &&
           const ListEquality().equals(other.rtepts, rtepts);
     }
 

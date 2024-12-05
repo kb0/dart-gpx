@@ -30,7 +30,7 @@ class Trk {
 
   /// You can add extend GPX by adding your own elements from another schema
   /// here.
-  Map<String, String> extensions;
+  Map<String, Object> extensions;
 
   /// A Track Segment holds a list of Track Points which are logically connected
   /// in order. To represent a single GPS track where GPS reception was lost, or
@@ -47,10 +47,10 @@ class Trk {
       List<Link>? links,
       this.number,
       this.type,
-      Map<String, String>? extensions,
+      Map<String, Object>? extensions,
       List<Trkseg>? trksegs})
       : links = links ?? [],
-        extensions = extensions ?? <String, String>{},
+        extensions = extensions ?? <String, Object>{},
         trksegs = trksegs ?? [];
 
   @override
@@ -64,7 +64,7 @@ class Trk {
           const ListEquality().equals(other.links, links) &&
           other.number == number &&
           other.type == type &&
-          const MapEquality().equals(other.extensions, extensions) &&
+          const DeepCollectionEquality().equals(other.extensions, extensions) &&
           const ListEquality().equals(other.trksegs, trksegs);
     }
 

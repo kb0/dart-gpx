@@ -191,7 +191,7 @@ class GpxWriter {
     }
   }
 
-  void _writeExtensions(XmlBuilder builder, Map<String, String>? value) {
+  void _writeExtensions(XmlBuilder builder, Map<String, Object>? value) {
     if (value != null && value.isNotEmpty) {
       builder.element(GpxTagV11.extensions, nest: () {
         value.forEach((k, v) {
@@ -216,7 +216,15 @@ class GpxWriter {
 
   void _writeElement(XmlBuilder builder, String tagName, Object? value) {
     if (value != null) {
-      builder.element(tagName, nest: value);
+      if (value is Map) {
+        builder.element(tagName, nest: () {
+          value.forEach((k, v) {
+            _writeElement(builder, k, v);
+          });
+        });
+      } else {
+        builder.element(tagName, nest: value);
+      }
     }
   }
 

@@ -79,7 +79,7 @@ class Wpt {
 
   /// You can add extend GPX by adding your own elements from another schema
   /// here.
-  Map<String, String> extensions;
+  Map<String, Object> extensions;
 
   /// Construct a new [Wpt] object.
   Wpt(
@@ -103,9 +103,9 @@ class Wpt {
       this.pdop,
       this.ageofdgpsdata,
       this.dgpsid,
-      Map<String, String>? extensions})
+      Map<String, Object>? extensions})
       : links = links ?? [],
-        extensions = extensions ?? <String, String>{};
+        extensions = extensions ?? <String, Object>{};
 
   @override
   // ignore: type_annotate_public_apis
@@ -131,7 +131,7 @@ class Wpt {
           other.pdop == pdop &&
           other.ageofdgpsdata == ageofdgpsdata &&
           other.dgpsid == dgpsid &&
-          const MapEquality().equals(other.extensions, extensions);
+          const DeepCollectionEquality().equals(other.extensions, extensions);
     }
 
     return false;

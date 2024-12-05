@@ -117,7 +117,11 @@ Gpx createComplexGPX() {
   gpx.metadata!.time = DateTime.utc(2010, 1, 2, 3, 4, 5);
   gpx.metadata!.copyright =
       Copyright(author: 'lib', year: 2019, license: 'UNKNOWN');
-  gpx.metadata!.extensions = {'m1': 'v1', 'm2': 'v2'};
+  gpx.metadata!.extensions = {
+    'm1': 'v1',
+    'm2': 'v2',
+    'mext:ext': {'mext:val': 'val', 'mext:num': '10'}
+  };
   gpx.wpts = [
     Wpt(
         lat: -25.7996,
@@ -125,7 +129,11 @@ Gpx createComplexGPX() {
         ele: 10.2,
         name: 'Monte Quemado',
         desc: 'Argentina',
-        extensions: {'k1': 'v1', 'k2': 'v2'}),
+        extensions: {
+          'k1': 'v1',
+          'k2': 'v2',
+          'wext:ext': {'wext:val': 'val', 'wext:num': '10'}
+        }),
     Wpt(lat: 36.62, lon: 101.77, ele: 10.2, name: 'Xining', desc: 'China'),
   ];
   gpx.rtes = [

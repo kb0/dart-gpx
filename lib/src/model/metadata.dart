@@ -38,7 +38,7 @@ class Metadata {
 
   /// You can add extend GPX by adding your own elements from another schema
   /// here.
-  Map<String, String> extensions = {};
+  Map<String, Object> extensions = {};
 
   /// Construct a new [Metadata] object.
   Metadata(
@@ -50,9 +50,9 @@ class Metadata {
       this.time,
       this.keywords,
       this.bounds,
-      Map<String, String>? extensions})
+      Map<String, Object>? extensions})
       : links = links ?? [],
-        extensions = extensions ?? <String, String>{};
+        extensions = extensions ?? <String, Object>{};
 
   @override
   // ignore: type_annotate_public_apis
@@ -66,7 +66,7 @@ class Metadata {
           other.time == time &&
           other.keywords == keywords &&
           other.bounds == bounds &&
-          const MapEquality().equals(other.extensions, extensions);
+          const DeepCollectionEquality().equals(other.extensions, extensions);
     }
 
     return false;

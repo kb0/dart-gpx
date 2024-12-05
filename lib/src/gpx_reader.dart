@@ -379,6 +379,39 @@ class GpxReader {
     return string;
   }
 
+  Object? _readMap(Iterator<XmlEvent> iterator, String tagName) {
+    final elm = iterator.current;
+    if (!(elm is XmlStartElementEvent &&
+        elm.name == tagName &&
+        !elm.isSelfClosing)) {
+      return null;
+    }
+
+    final valueMap = <String, Object>{};
+    String? valueText;
+    while (iterator.moveNext()) {
+      final val = iterator.current;
+
+      if (val is XmlStartElementEvent) {
+        valueMap[val.name] = _readMap(iterator, val.name) ?? {};
+      }
+
+      if (val is XmlTextEvent) {
+        valueText = val.value;
+      }
+
+      if (val is XmlCDATAEvent) {
+        valueText = val.value;
+      }
+
+      if (val is XmlEndElementEvent && val.name == tagName) {
+        break;
+      }
+    }
+
+    return valueMap.isNotEmpty ? valueMap : valueText;
+  }
+
   Trkseg _readSegment(Iterator<XmlEvent> iterator) {
     final trkseg = Trkseg();
     final elm = iterator.current;
@@ -407,31 +440,9 @@ class GpxReader {
     return trkseg;
   }
 
-  Map<String, String> _readExtensions(Iterator<XmlEvent> iterator) {
-    final exts = <String, String>{};
-    final elm = iterator.current;
-
-    /*if (elm is XmlStartElementEvent) {
-      link.href = elm.attributes
-          .firstWhere((attr) => attr.name == GpxTagV11.href)
-          .value;
-    }*/
-
-    if ((elm is XmlStartElementEvent) && !elm.isSelfClosing) {
-      while (iterator.moveNext()) {
-        final val = iterator.current;
-
-        if (val is XmlStartElementEvent) {
-          exts[val.name] = _readString(iterator, val.name) ?? '';
-        }
-
-        if (val is XmlEndElementEvent && val.name == GpxTagV11.extensions) {
-          break;
-        }
-      }
-    }
-
-    return exts;
+  Map<String, Object> _readExtensions(Iterator<XmlEvent> iterator) {
+    final exts = _readMap(iterator, GpxTagV11.extensions) ?? {};
+    return (exts is Map<String, Object>) ? exts : {};
   }
 
   Link _readLink(Iterator<XmlEvent> iterator) {

@@ -32,7 +32,7 @@ class Gpx {
 
   /// You can add extend GPX by adding your own elements from another schema
   /// here.
-  Map<String, String> extensions = {};
+  Map<String, Object> extensions = {};
 
   @override
   // ignore: type_annotate_public_apis
@@ -44,7 +44,7 @@ class Gpx {
           const ListEquality().equals(other.wpts, wpts) &&
           const ListEquality().equals(other.rtes, rtes) &&
           const ListEquality().equals(other.trks, trks) &&
-          const MapEquality().equals(other.extensions, extensions);
+          const DeepCollectionEquality().equals(other.extensions, extensions);
     }
 
     return false;

@@ -45,6 +45,7 @@ void main() {
         .fromString(await File('test/assets/complex.gpx').readAsString());
     final src = createComplexGPX();
 
+    expect(gpx.metadata?.extensions, src.metadata?.extensions);
     expect(gpx.metadata, src.metadata);
     expect(gpx.extensions, src.extensions);
     expect(gpx.trks, src.trks);
