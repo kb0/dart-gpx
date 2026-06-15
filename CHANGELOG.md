@@ -1,3 +1,9 @@
+## [2.4.0]
+
+* add namespaces for 
+* update Dart SDK to 2.19 or later
+* update XML to 6.3.0
+
 ## [2.3.0]
 
 * update extensions to nested maps structure

@@ -1,5 +1,3 @@
-library gpx.test.all_test;
-
 import 'package:test/test.dart';
 
 import 'gpx_reader_test.dart' as gpx_reader_test;

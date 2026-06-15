@@ -15,10 +15,10 @@ import 'model/wpt.dart';
 
 /// Read Gpx from string
 class GpxReader {
-//  // @TODO
-//  Gpx fromStream(Stream<int> stream) {
-//
-//  }
+  //  // @TODO
+  //  Gpx fromStream(Stream<int> stream) {
+  //
+  //  }
 
   /// Parse xml string and create Gpx object
   Gpx fromString(String xml) {
@@ -37,14 +37,24 @@ class GpxReader {
     final gpx = Gpx();
 
     gpx.version = gpxTag.attributes
-        .firstWhere((attr) => attr.name == GpxTagV11.version,
-            orElse: () => XmlEventAttribute(
-                GpxTagV11.version, '1.1', XmlAttributeType.DOUBLE_QUOTE))
+        .firstWhere(
+          (attr) => attr.name == GpxTagV11.version,
+          orElse: () => XmlEventAttribute(
+            GpxTagV11.version,
+            '1.1',
+            XmlAttributeType.DOUBLE_QUOTE,
+          ),
+        )
         .value;
     gpx.creator = gpxTag.attributes
-        .firstWhere((attr) => attr.name == GpxTagV11.creator,
-            orElse: () => XmlEventAttribute(
-                GpxTagV11.creator, 'unknown', XmlAttributeType.DOUBLE_QUOTE))
+        .firstWhere(
+          (attr) => attr.name == GpxTagV11.creator,
+          orElse: () => XmlEventAttribute(
+            GpxTagV11.creator,
+            'unknown',
+            XmlAttributeType.DOUBLE_QUOTE,
+          ),
+        )
         .value;
 
     while (iterator.moveNext()) {
@@ -238,12 +248,16 @@ class GpxReader {
     final elm = iterator.current;
 
     if (elm is XmlStartElementEvent) {
-      wpt.lat = double.parse(elm.attributes
-          .firstWhere((attr) => attr.name == GpxTagV11.latitude)
-          .value);
-      wpt.lon = double.parse(elm.attributes
-          .firstWhere((attr) => attr.name == GpxTagV11.longitude)
-          .value);
+      wpt.lat = double.parse(
+        elm.attributes
+            .firstWhere((attr) => attr.name == GpxTagV11.latitude)
+            .value,
+      );
+      wpt.lon = double.parse(
+        elm.attributes
+            .firstWhere((attr) => attr.name == GpxTagV11.longitude)
+            .value,
+      );
     }
 
     if ((elm is XmlStartElementEvent) && !elm.isSelfClosing) {
@@ -259,10 +273,11 @@ class GpxReader {
             case GpxTagV11.fix:
               final fixAsString = _readString(iterator, val.name);
               wpt.fix = FixType.values.firstWhere(
-                  (e) =>
-                      e.toString().replaceFirst('.fix_', '.') ==
-                      'FixType.$fixAsString',
-                  orElse: () => FixType.unknown);
+                (e) =>
+                    e.toString().replaceFirst('.fix_', '.') ==
+                    'FixType.$fixAsString',
+                orElse: () => FixType.unknown,
+              );
 
               if (wpt.fix == FixType.unknown) {
                 wpt.fix = null;
@@ -551,18 +566,26 @@ class GpxReader {
     final elm = iterator.current;
 
     if (elm is XmlStartElementEvent) {
-      bounds.minlat = double.parse(elm.attributes
-          .firstWhere((attr) => attr.name == GpxTagV11.minLatitude)
-          .value);
-      bounds.minlon = double.parse(elm.attributes
-          .firstWhere((attr) => attr.name == GpxTagV11.minLongitude)
-          .value);
-      bounds.maxlat = double.parse(elm.attributes
-          .firstWhere((attr) => attr.name == GpxTagV11.maxLatitude)
-          .value);
-      bounds.maxlon = double.parse(elm.attributes
-          .firstWhere((attr) => attr.name == GpxTagV11.maxLongitude)
-          .value);
+      bounds.minlat = double.parse(
+        elm.attributes
+            .firstWhere((attr) => attr.name == GpxTagV11.minLatitude)
+            .value,
+      );
+      bounds.minlon = double.parse(
+        elm.attributes
+            .firstWhere((attr) => attr.name == GpxTagV11.minLongitude)
+            .value,
+      );
+      bounds.maxlat = double.parse(
+        elm.attributes
+            .firstWhere((attr) => attr.name == GpxTagV11.maxLatitude)
+            .value,
+      );
+      bounds.maxlon = double.parse(
+        elm.attributes
+            .firstWhere((attr) => attr.name == GpxTagV11.maxLongitude)
+            .value,
+      );
 
       if (!elm.isSelfClosing) {
         while (iterator.moveNext()) {
@@ -583,8 +606,9 @@ class GpxReader {
     final elm = iterator.current;
 
     if (elm is XmlStartElementEvent) {
-      email.id =
-          elm.attributes.firstWhere((attr) => attr.name == GpxTagV11.id).value;
+      email.id = elm.attributes
+          .firstWhere((attr) => attr.name == GpxTagV11.id)
+          .value;
       email.domain = elm.attributes
           .firstWhere((attr) => attr.name == GpxTagV11.domain)
           .value;

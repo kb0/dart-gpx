@@ -41,18 +41,18 @@ class Metadata {
   Map<String, Object> extensions = {};
 
   /// Construct a new [Metadata] object.
-  Metadata(
-      {this.name,
-      this.desc,
-      this.author,
-      this.copyright,
-      List<Link>? links,
-      this.time,
-      this.keywords,
-      this.bounds,
-      Map<String, Object>? extensions})
-      : links = links ?? [],
-        extensions = extensions ?? <String, Object>{};
+  Metadata({
+    this.name,
+    this.desc,
+    this.author,
+    this.copyright,
+    List<Link>? links,
+    this.time,
+    this.keywords,
+    this.bounds,
+    Map<String, Object>? extensions,
+  }) : links = links ?? [],
+       extensions = extensions ?? <String, Object>{};
 
   @override
   // ignore: type_annotate_public_apis
@@ -73,26 +73,22 @@ class Metadata {
   }
 
   @override
-  String toString() => "Metadata[${[
-        name,
-        author,
-        copyright,
-        time,
-        bounds,
-        extensions
-      ].join(",")}]";
+  String toString() =>
+      'Metadata['
+      '${[name, author, copyright, time, bounds, extensions].join(",")}'
+      ']';
 
   @override
   int get hashCode => hashObjects([
-        name,
-        desc,
-        author,
-        copyright,
-        ...links,
-        time,
-        keywords,
-        bounds,
-        ...extensions.keys,
-        ...extensions.values
-      ]);
+    name,
+    desc,
+    author,
+    copyright,
+    ...links,
+    time,
+    keywords,
+    bounds,
+    ...extensions.keys,
+    ...extensions.values,
+  ]);
 }

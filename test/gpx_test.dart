@@ -1,5 +1,3 @@
-library gpx.test.gpx_test;
-
 import 'package:gpx/gpx.dart';
 import 'package:test/test.dart';
 
@@ -39,34 +37,42 @@ void main() {
     expect(gpx1.hashCode, gpx2.hashCode);
 
     gpx1.rtes = [
-      Rte(rtepts: [Wpt(lat: 1)])
+      Rte(rtepts: [Wpt(lat: 1)]),
     ];
     gpx2.rtes = [
-      Rte(rtepts: [Wpt(lat: 1)])
+      Rte(rtepts: [Wpt(lat: 1)]),
     ];
     expect(gpx1, gpx2);
 
     gpx1.trks = [
-      Trk(trksegs: [
-        Trkseg(trkpts: [Wpt(lat: 1)])
-      ])
+      Trk(
+        trksegs: [
+          Trkseg(trkpts: [Wpt(lat: 1)]),
+        ],
+      ),
     ];
     gpx2.trks = [
-      Trk(trksegs: [
-        Trkseg(trkpts: [Wpt(lat: 1)])
-      ])
+      Trk(
+        trksegs: [
+          Trkseg(trkpts: [Wpt(lat: 1)]),
+        ],
+      ),
     ];
     expect(gpx1, gpx2);
 
     gpx1.trks = [
-      Trk(trksegs: [
-        Trkseg(trkpts: [Wpt(lat: 1)])
-      ])
+      Trk(
+        trksegs: [
+          Trkseg(trkpts: [Wpt(lat: 1)]),
+        ],
+      ),
     ];
     gpx2.trks = [
-      Trk(trksegs: [
-        Trkseg(trkpts: [Wpt(lat: 2)])
-      ])
+      Trk(
+        trksegs: [
+          Trkseg(trkpts: [Wpt(lat: 2)]),
+        ],
+      ),
     ];
 
     expect(gpx1, isNot(gpx2));
@@ -101,20 +107,30 @@ void main() {
     expect(Email().toString(), Email().toString());
 
     expect(Email(id: 'mail'), Email(id: 'mail'));
-    expect(Email(id: 'mail', domain: 'test.com'),
-        Email(id: 'mail', domain: 'test.com'));
+    expect(
+      Email(id: 'mail', domain: 'test.com'),
+      Email(id: 'mail', domain: 'test.com'),
+    );
 
-    expect(Email(id: 'mail', domain: 'test.com').toString(),
-        Email(id: 'mail', domain: 'test.com').toString());
+    expect(
+      Email(id: 'mail', domain: 'test.com').toString(),
+      Email(id: 'mail', domain: 'test.com').toString(),
+    );
 
-    expect(Email(id: 'mail', domain: 'test.com').hashCode,
-        Email(id: 'mail', domain: 'test.com').hashCode);
+    expect(
+      Email(id: 'mail', domain: 'test.com').hashCode,
+      Email(id: 'mail', domain: 'test.com').hashCode,
+    );
 
-    expect(Email(id: 'mail', domain: 'test.com'),
-        isNot(equals(Email(id: 'mail1', domain: 'test.com'))));
+    expect(
+      Email(id: 'mail', domain: 'test.com'),
+      isNot(equals(Email(id: 'mail1', domain: 'test.com'))),
+    );
 
-    expect(Email(id: 'mail', domain: 'test.com'),
-        isNot(equals(Email(id: 'mail', domain: 'test1.com'))));
+    expect(
+      Email(id: 'mail', domain: 'test.com'),
+      isNot(equals(Email(id: 'mail', domain: 'test1.com'))),
+    );
   });
 
   test('compare metadata objects', () async {

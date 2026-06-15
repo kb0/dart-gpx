@@ -1,5 +1,3 @@
-library gpx.test.kml_writer_test;
-
 import 'dart:io';
 
 import 'package:gpx/gpx.dart';
@@ -17,8 +15,9 @@ void main() {
 
   test('write empty kml with metadata', () async {
     final gpx = createMinimalMetadataGPX();
-    final xml =
-        await File('test/assets/minimal_with_metadata.kml').readAsString();
+    final xml = await File(
+      'test/assets/minimal_with_metadata.kml',
+    ).readAsString();
 
     expectXml(KmlWriter().asString(gpx, pretty: true), xml);
   });
@@ -53,18 +52,22 @@ void main() {
 
   test('write complex kml with altitudeMode', () async {
     final gpx = createComplexGPX();
-    final xml =
-        await File('test/assets/complex_clampToGround.kml').readAsString();
+    final xml = await File(
+      'test/assets/complex_clampToGround.kml',
+    ).readAsString();
 
     expectXml(
-        KmlWriter(altitudeMode: AltitudeMode.clampToGround)
-            .asString(gpx, pretty: true),
-        xml);
+      KmlWriter(
+        altitudeMode: AltitudeMode.clampToGround,
+      ).asString(gpx, pretty: true),
+      xml,
+    );
   });
 
   test('write large kml', () async {
-    final gpx = GpxReader()
-        .fromString(await File('test/assets/large.gpx').readAsString());
+    final gpx = GpxReader().fromString(
+      await File('test/assets/large.gpx').readAsString(),
+    );
     final xml = await File('test/assets/large.kml').readAsString();
 
     expectXml(KmlWriter().asString(gpx, pretty: true), xml);

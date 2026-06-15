@@ -1,5 +1,3 @@
-library gpx;
-
 export 'src/gpx_reader.dart';
 export 'src/gpx_writer.dart';
 export 'src/kml_writer.dart';

@@ -1,5 +1,3 @@
-library gpx.test.gpx_writer_test;
-
 import 'dart:io';
 
 import 'package:gpx/gpx.dart';
@@ -17,8 +15,9 @@ void main() {
 
   test('write empty gpx with metadata', () async {
     final gpx = createMinimalMetadataGPX();
-    final xml =
-        await File('test/assets/minimal_with_metadata.gpx').readAsString();
+    final xml = await File(
+      'test/assets/minimal_with_metadata.gpx',
+    ).readAsString();
 
     expectXml(GpxWriter().asString(gpx, pretty: true), xml);
   });
@@ -70,7 +69,7 @@ void main() {
     gpx.wpts = [
       Wpt(lat: 1, lon: 1, fix: FixType.fix_2d),
       Wpt(lat: 1, lon: 1, fix: FixType.fix_3d),
-      Wpt(lat: 1, lon: 1, fix: FixType.none)
+      Wpt(lat: 1, lon: 1, fix: FixType.none),
     ];
     final xml = await File('test/assets/fix.gpx').readAsString();
 
@@ -79,18 +78,35 @@ void main() {
 
   test('write custom namespaces', () async {
     final gpx = createMinimalGPX();
-    gpx.wpts = [
-      Wpt(lat: 1, lon: 1, fix: FixType.fix_2d),
-      Wpt(lat: 1, lon: 1, fix: FixType.fix_3d),
-      Wpt(lat: 1, lon: 1, fix: FixType.none)
-    ];
-    final xml = await File('test/assets/namespace.gpx').readAsString();
+    gpx.wpts = [Wpt(lat: 1, lon: 1, fix: FixType.none)];
+    final xml = await File('test/assets/namespace_attrs.gpx').readAsString();
 
     final gpxXml = GpxWriter().asXml(gpx);
     gpxXml.children[1].setAttribute(
-        'xmlns:trp', 'http://www.garmin.com/xmlschemas/TripExtensions/v1');
-    gpxXml.children[1].setAttribute('xsi:schemaLocation',
-        'http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd');
+      'xmlns:trp',
+      'http://www.garmin.com/xmlschemas/TripExtensions/v1',
+    );
+    gpxXml.children[1].setAttribute(
+      'xsi:schemaLocation',
+      'http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd',
+    );
     expectXml(gpxXml.toXmlString(), xml);
+  });
+
+  test('write custom namespaces as params', () async {
+    final gpx = createMinimalGPX();
+    gpx.wpts = [Wpt(lat: 1, lon: 1, fix: FixType.none)];
+    final xml = await File('test/assets/namespace.gpx').readAsString();
+
+    final str = GpxWriter().asString(
+      gpx,
+      namespaces: {'trp': 'http://www.garmin.com/xmlschemas/TripExtensions/v1'},
+      attributes: {
+        'xsi:schemaLocation':
+            'http://www.topografix.com/GPX/1/1 '
+            'http://www.topografix.com/GPX/1/1/gpx.xsd',
+      },
+    );
+    expectXml(str, xml);
   });
 }

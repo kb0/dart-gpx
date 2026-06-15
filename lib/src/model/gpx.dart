@@ -51,27 +51,22 @@ class Gpx {
   }
 
   @override
-  String toString() => "Gpx[${[
-        version,
-        creator,
-        metadata,
-        wpts,
-        rtes,
-        trks,
-        extensions
-      ].join(",")}]";
+  String toString() =>
+      'Gpx['
+      '${[version, creator, metadata, wpts, rtes, trks, extensions].join(",")}'
+      ']';
 
   @override
   int get hashCode => hashObjects([
-        version,
-        creator,
-        metadata,
-        ...extensions.keys,
-        ...extensions.values,
-        ...trks,
-        ...rtes,
-        ...wpts
-      ]);
+    version,
+    creator,
+    metadata,
+    ...extensions.keys,
+    ...extensions.values,
+    ...trks,
+    ...rtes,
+    ...wpts,
+  ]);
 }
 
 class Pt {

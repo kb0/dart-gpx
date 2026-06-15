@@ -37,19 +37,19 @@ class Rte {
   List<Wpt> rtepts;
 
   /// Construct a new [Rte] object.
-  Rte(
-      {this.name,
-      this.cmt,
-      this.desc,
-      this.src,
-      List<Link>? links,
-      this.number,
-      this.type,
-      Map<String, Object>? extensions,
-      List<Wpt>? rtepts})
-      : links = links ?? [],
-        extensions = extensions ?? <String, Object>{},
-        rtepts = rtepts ?? [];
+  Rte({
+    this.name,
+    this.cmt,
+    this.desc,
+    this.src,
+    List<Link>? links,
+    this.number,
+    this.type,
+    Map<String, Object>? extensions,
+    List<Wpt>? rtepts,
+  }) : links = links ?? [],
+       extensions = extensions ?? <String, Object>{},
+       rtepts = rtepts ?? [];
 
   @override
   // ignore: type_annotate_public_apis
@@ -74,15 +74,15 @@ class Rte {
 
   @override
   int get hashCode => hashObjects([
-        name,
-        cmt,
-        desc,
-        src,
-        ...links,
-        number,
-        type,
-        ...extensions.keys,
-        ...extensions.values,
-        ...rtepts
-      ]);
+    name,
+    cmt,
+    desc,
+    src,
+    ...links,
+    number,
+    type,
+    ...extensions.keys,
+    ...extensions.values,
+    ...rtepts,
+  ]);
 }

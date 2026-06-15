@@ -1,5 +1,3 @@
-library gpx.test.gpx_reader_test;
-
 import 'dart:io';
 
 import 'package:gpx/gpx.dart';
@@ -9,40 +7,45 @@ import 'utils.dart';
 
 void main() {
   test('read gpx with multiply points', () async {
-    final gpx = GpxReader()
-        .fromString(await File('test/assets/wpt.gpx').readAsString());
+    final gpx = GpxReader().fromString(
+      await File('test/assets/wpt.gpx').readAsString(),
+    );
     final src = createGPXWithWpt();
 
     expect(gpx, src);
   });
 
   test('read gpx with multiply points', () async {
-    final gpx = GpxReader()
-        .fromString(await File('test/assets/wpt.gpx').readAsString());
+    final gpx = GpxReader().fromString(
+      await File('test/assets/wpt.gpx').readAsString(),
+    );
     final src = createGPXWithWpt();
 
     expect(gpx, src);
   });
 
   test('read gpx with multiply routes', () async {
-    final gpx = GpxReader()
-        .fromString(await File('test/assets/rte.gpx').readAsString());
+    final gpx = GpxReader().fromString(
+      await File('test/assets/rte.gpx').readAsString(),
+    );
     final src = createGPXWithRte();
 
     expect(gpx, src);
   });
 
   test('read gpx with multiply tracks', () async {
-    final gpx = GpxReader()
-        .fromString(await File('test/assets/trk.gpx').readAsString());
+    final gpx = GpxReader().fromString(
+      await File('test/assets/trk.gpx').readAsString(),
+    );
     final src = createGPXWithTrk();
 
     expect(gpx, src);
   });
 
   test('read complex gpx', () async {
-    final gpx = GpxReader()
-        .fromString(await File('test/assets/complex.gpx').readAsString());
+    final gpx = GpxReader().fromString(
+      await File('test/assets/complex.gpx').readAsString(),
+    );
     final src = createComplexGPX();
 
     expect(gpx.metadata?.extensions, src.metadata?.extensions);
@@ -54,8 +57,9 @@ void main() {
   });
 
   test('read metadata gpx', () async {
-    final gpx = GpxReader()
-        .fromString(await File('test/assets/metadata.gpx').readAsString());
+    final gpx = GpxReader().fromString(
+      await File('test/assets/metadata.gpx').readAsString(),
+    );
     final src = createMetadataGPX();
 
     expect(gpx.metadata, src.metadata);
@@ -63,8 +67,9 @@ void main() {
   });
 
   test('read large', () async {
-    final gpx = GpxReader()
-        .fromString(await File('test/assets/large.gpx').readAsString());
+    final gpx = GpxReader().fromString(
+      await File('test/assets/large.gpx').readAsString(),
+    );
 
     expect(gpx.trks.length, 1);
     expect(gpx.trks.first.trksegs.length, 1);
@@ -72,7 +77,8 @@ void main() {
   });
 
   test('read simple gpx', () {
-    const xml = '<?xml version="1.0" encoding="UTF-8" ?>'
+    const xml =
+        '<?xml version="1.0" encoding="UTF-8" ?>'
         '<gpx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" creator="GPSLogger 79 - http://gpslogger.mendhak.com/" xmlns="http://www.topografix.com/GPX/1/0" xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd">'
         '<metadata>'
         '<name>Five Hikes in the White Mountains</name>'
@@ -123,27 +129,31 @@ void main() {
     expect(gpx.trks.first.trksegs.first.trkpts.last.vdop, 0.8);
     expect(gpx.trks.first.trksegs.first.trkpts.last.pdop, 1.1);
     expect(gpx.trks.first.trksegs.first.trkpts.last.src, 'gps');
-    expect(gpx.trks.first.trksegs.first.trkpts.last.time,
-        DateTime.utc(2016, 8, 21, 12, 24, 31));
+    expect(
+      gpx.trks.first.trksegs.first.trkpts.last.time,
+      DateTime.utc(2016, 8, 21, 12, 24, 31),
+    );
   });
 
   test('issue-4 FixType', () async {
-    final gpx = GpxReader()
-        .fromString(await File('test/assets/fix.gpx').readAsString());
+    final gpx = GpxReader().fromString(
+      await File('test/assets/fix.gpx').readAsString(),
+    );
 
     expect(gpx.wpts[0].fix, FixType.fix_2d);
     expect(gpx.wpts[1].fix, FixType.fix_3d);
     expect(gpx.wpts[2].fix, FixType.none);
 
-    final gpxUnknown = GpxReader()
-        .fromString(await File('test/assets/fix_unknown.gpx').readAsString());
+    final gpxUnknown = GpxReader().fromString(
+      await File('test/assets/fix_unknown.gpx').readAsString(),
+    );
     expect(gpxUnknown.wpts[0].fix, null);
   });
 
   test('issue-4', () async {
     final gpx = GpxReader().fromString(
-        await File('test/assets/20160617-La-Hermida-to-Bejes.gpx')
-            .readAsString());
+      await File('test/assets/20160617-La-Hermida-to-Bejes.gpx').readAsString(),
+    );
 
     expect(gpx.creator, 'MapGazer 1.86');
     expect(gpx.metadata!.links.length, 1);

@@ -39,19 +39,19 @@ class Trk {
   List<Trkseg> trksegs;
 
   /// Construct a new [Trk] object.
-  Trk(
-      {this.name,
-      this.cmt,
-      this.desc,
-      this.src,
-      List<Link>? links,
-      this.number,
-      this.type,
-      Map<String, Object>? extensions,
-      List<Trkseg>? trksegs})
-      : links = links ?? [],
-        extensions = extensions ?? <String, Object>{},
-        trksegs = trksegs ?? [];
+  Trk({
+    this.name,
+    this.cmt,
+    this.desc,
+    this.src,
+    List<Link>? links,
+    this.number,
+    this.type,
+    Map<String, Object>? extensions,
+    List<Trkseg>? trksegs,
+  }) : links = links ?? [],
+       extensions = extensions ?? <String, Object>{},
+       trksegs = trksegs ?? [];
 
   @override
   // ignore: type_annotate_public_apis
@@ -76,15 +76,15 @@ class Trk {
 
   @override
   int get hashCode => hashObjects([
-        name,
-        cmt,
-        desc,
-        src,
-        number,
-        type,
-        ...links,
-        ...extensions.keys,
-        ...extensions.values,
-        ...trksegs
-      ]);
+    name,
+    cmt,
+    desc,
+    src,
+    number,
+    type,
+    ...links,
+    ...extensions.keys,
+    ...extensions.values,
+    ...trksegs,
+  ]);
 }

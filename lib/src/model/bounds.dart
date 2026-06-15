@@ -15,11 +15,12 @@ class Bounds {
   double maxlon;
 
   /// Construct a new [Bounds] with rect [minlat, minlon, maxlat, maxlon].
-  Bounds(
-      {this.minlat = 0.0,
-      this.minlon = 0.0,
-      this.maxlat = 0.0,
-      this.maxlon = 0.0});
+  Bounds({
+    this.minlat = 0.0,
+    this.minlon = 0.0,
+    this.maxlat = 0.0,
+    this.maxlon = 0.0,
+  });
 
   @override
   // ignore: type_annotate_public_apis

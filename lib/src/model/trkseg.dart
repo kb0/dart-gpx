@@ -18,8 +18,8 @@ class Trkseg {
 
   /// Construct a new [Trkseg] object.
   Trkseg({List<Wpt>? trkpts, Map<String, Object>? extensions})
-      : trkpts = trkpts ?? [],
-        extensions = extensions ?? <String, Object>{};
+    : trkpts = trkpts ?? [],
+      extensions = extensions ?? <String, Object>{};
 
   @override
   // ignore: type_annotate_public_apis

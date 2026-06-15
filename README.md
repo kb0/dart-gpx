@@ -24,7 +24,7 @@ In your dart/flutter project add the dependency:
 ```
  dependencies:
    ...
-   gpx: ^2.3.0
+   gpx: ^2.4.0
 ```
 
 ### Reading XML
@@ -62,8 +62,21 @@ main() {
   ];
 
   // generate xml string
-  var gpxString = GpxWriter().asString(gpx, pretty: true);
-  print(gpxString);
+  var gpxString1 = GpxWriter().asString(gpx, pretty: true);
+  print(gpxString1);
+  
+  // generate xml string with namespaces
+  var gpxString2 = GpxWriter().asString(
+    gpx,
+    namespaces: {
+      'trp': 'http://www.garmin.com/xmlschemas/TripExtensions/v1',
+    },
+    attributes: {
+      'xsi:schemaLocation': 'http://www.topografix.com/GPX/1/1 '
+          'http://www.topografix.com/GPX/1/1/gpx.xsd',
+    },
+  );
+  print(gpxString2);
 }
 ```
 
