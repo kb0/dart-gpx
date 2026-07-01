@@ -222,9 +222,9 @@ class GpxWriter {
           _writeAttribute(builder, GpxTagV11.latitude, wpt.lat);
           _writeAttribute(builder, GpxTagV11.longitude, wpt.lon);
 
-          _writeElementWithTime(builder, GpxTagV11.time, wpt.time);
-
           _writeElement(builder, GpxTagV11.elevation, wpt.ele);
+
+          _writeElementWithTime(builder, GpxTagV11.time, wpt.time);
           _writeElement(
             builder,
             GpxTagV11.fix,
