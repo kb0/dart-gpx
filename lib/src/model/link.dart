@@ -1,5 +1,3 @@
-import 'package:quiver/core.dart';
-
 /// A link to an external resource (Web page, digital photo, video clip, etc)
 /// with additional information.
 class Link {
@@ -29,5 +27,5 @@ class Link {
   String toString() => "Link[${[href].join(",")}]";
 
   @override
-  int get hashCode => hashObjects([href, text, type]);
+  int get hashCode => Object.hashAll([href, text, type]);
 }

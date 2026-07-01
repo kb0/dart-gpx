@@ -1,5 +1,3 @@
-import 'package:quiver/core.dart';
-
 /// Two lat/lon pairs defining the extent of an element.
 class Bounds {
   /// The minimum latitude.
@@ -39,5 +37,5 @@ class Bounds {
   String toString() => "Bounds[${[minlat, minlon, maxlat, maxlon].join(",")}]";
 
   @override
-  int get hashCode => hashObjects([minlat, minlon, maxlat, maxlon]);
+  int get hashCode => Object.hashAll([minlat, minlon, maxlat, maxlon]);
 }

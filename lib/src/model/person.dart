@@ -1,5 +1,3 @@
-import 'package:quiver/core.dart';
-
 import 'email.dart';
 import 'link.dart';
 
@@ -31,5 +29,5 @@ class Person {
   String toString() => "Person[${[name, email, link].join(",")}]";
 
   @override
-  int get hashCode => hashObjects([name, email, link]);
+  int get hashCode => Object.hashAll([name, email, link]);
 }

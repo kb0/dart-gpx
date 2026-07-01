@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:quiver/core.dart';
 
 import 'link.dart';
 
@@ -142,7 +141,7 @@ class Wpt {
       "Wpt[${[lat, lon, ele, time, name, src, extensions].join(",")}]";
 
   @override
-  int get hashCode => hashObjects([
+  int get hashCode => Object.hashAll([
     lat,
     lon,
     ele,

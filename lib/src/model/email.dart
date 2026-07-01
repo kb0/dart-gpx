@@ -1,5 +1,3 @@
-import 'package:quiver/core.dart';
-
 /// An email address. Broken into two parts (id and domain) to help prevent
 /// email harvesting.
 class Email {
@@ -26,5 +24,5 @@ class Email {
   String toString() => "Email[${[id, domain].join(",")}]";
 
   @override
-  int get hashCode => hashObjects([id, domain]);
+  int get hashCode => Object.hashAll([id, domain]);
 }

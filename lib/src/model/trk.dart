@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:quiver/core.dart';
 
 import 'link.dart';
 import 'trkseg.dart';
@@ -75,7 +74,7 @@ class Trk {
   String toString() => "Trk[${[name, type, extensions, trksegs].join(",")}]";
 
   @override
-  int get hashCode => hashObjects([
+  int get hashCode => Object.hashAll([
     name,
     cmt,
     desc,

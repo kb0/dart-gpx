@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:quiver/core.dart';
 
 import 'metadata.dart';
 import 'rte.dart';
@@ -57,7 +56,7 @@ class Gpx {
       ']';
 
   @override
-  int get hashCode => hashObjects([
+  int get hashCode => Object.hashAll([
     version,
     creator,
     metadata,
