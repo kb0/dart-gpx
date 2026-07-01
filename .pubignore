@@ -1,0 +1,7 @@
+AGENTS.md
+.codex/
+.dart_tool/
+.idea/
+*.iml
+coverage/
+out/

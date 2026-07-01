@@ -8,7 +8,6 @@ environment:
 
 dependencies:
   collection: '>=1.16.0 <2.0.0'
-  quiver: '>=3.0.0 <4.0.0'
   xml: '>=7.0.0 <8.0.0'
 
 dev_dependencies:

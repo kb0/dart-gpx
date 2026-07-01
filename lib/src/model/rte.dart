@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:quiver/core.dart';
 
 import 'link.dart';
 import 'wpt.dart';
@@ -73,7 +72,7 @@ class Rte {
   String toString() => "Rte[${[name, type, extensions, rtepts].join(",")}]";
 
   @override
-  int get hashCode => hashObjects([
+  int get hashCode => Object.hashAll([
     name,
     cmt,
     desc,

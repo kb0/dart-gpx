@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:quiver/core.dart';
 
 import 'bounds.dart';
 import 'copyright.dart';
@@ -79,7 +78,7 @@ class Metadata {
       ']';
 
   @override
-  int get hashCode => hashObjects([
+  int get hashCode => Object.hashAll([
     name,
     desc,
     author,

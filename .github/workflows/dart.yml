@@ -14,23 +14,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: dart-lang/setup-dart@v1
 
       - name: Install dependencies
         run: dart pub get
 
       - name: Verify formatting
-        run: dart format --output=none --set-exit-if-changed .
+        run: dart format --output=none --set-exit-if-changed lib test example
 
       - name: Analyze project source
-        run: dart analyze --fatal-warnings --fatal-infos --verbose .
-
-      - name: Activate code coverage
-        run: dart pub global activate coverage
-
-      - name: Analyze code coverage
-        run: dart pub global run coverage:test_with_coverage
+        run: dart analyze --fatal-warnings --fatal-infos
 
   test:
     runs-on: ${{ matrix.os }}
@@ -40,8 +34,8 @@ jobs:
         os: [ubuntu-latest]
         sdk: [stable, 3.11.0]
     steps:
-      - uses: actions/checkout@v2
-      - uses: dart-lang/setup-dart@v1.0
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
         with:
           sdk: ${{ matrix.sdk }}
 
@@ -55,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: dart-lang/setup-dart@v1
 
       - name: Install dependencies

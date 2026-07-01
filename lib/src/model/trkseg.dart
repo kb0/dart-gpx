@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:quiver/core.dart';
 
 import 'wpt.dart';
 
@@ -37,5 +36,5 @@ class Trkseg {
 
   @override
   int get hashCode =>
-      hashObjects([...extensions.keys, ...extensions.values, ...trkpts]);
+      Object.hashAll([...extensions.keys, ...extensions.values, ...trkpts]);
 }
