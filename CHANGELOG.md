@@ -1,3 +1,9 @@
+## [2.4.1]
+
+* remove quiver (migrate to Object.hashAll)
+* fix: Change tag order to comply with GPX 1.1 schema (ele before time)
+
+
 ## [2.4.0]
 
 * add namespaces for 
