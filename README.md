@@ -113,23 +113,84 @@ This writes a root element with the standard GPX 1.1 declarations:
     creator="dart-gpx library">
 ```
 
-For Garmin BaseCamp files that also need Garmin extension namespaces, combine
-the GPX 1.1 compatibility mode with custom namespaces:
+For Garmin BaseCamp files that also need the Garmin `GpxExtensions/v3`
+namespace, combine the GPX 1.1 compatibility mode with `GpxNamespaces.garmin`:
 
 ```dart
 final xml = GpxWriter().asString(
   gpx,
   pretty: true,
   compatibility: GpxCompatibilityMode.gpx11,
-  namespaces: {
-    'gpxtpx': 'http://www.garmin.com/xmlschemas/TrackPointExtension/v1',
-    'gpxx': 'http://www.garmin.com/xmlschemas/GpxExtensions/v3',
-  },
+  namespaces: GpxNamespaces.garmin,
 );
 ```
 
 Custom `namespaces` and `attributes` are applied after the compatibility mode,
 so they can extend or override the default GPX 1.1 declarations when needed.
+
+### Garmin GpxExtensions v3
+
+The package includes typed models for the Garmin `GpxExtensions/v3`, `TrackPointExtension/v1`, and 
+`WaypointExtension/v1` schemas:
+
+- `GarminWaypointExtension`
+- `GarminWaypointExtensionV1`
+- `GarminRouteExtension`
+- `GarminRoutePointExtension`
+- `GarminTrackExtension`
+- `GarminTrackPointExtension`
+- `GarminTrackPointExtensionV1`
+
+```dart
+final gpx = Gpx()
+  ..creator = 'dart-gpx library'
+  ..trks = [
+    Trk(
+      name: 'Morning track',
+      typedExtensions: TrkTypedExtensions(
+        garmin: GarminTrkExtensions(
+          track: GarminTrackExtension(
+            displayColor: GarminDisplayColor.darkRed,
+          ),
+        ),
+      ),
+      trksegs: [
+        Trkseg(
+          trkpts: [
+            Wpt(
+              lat: 51.5,
+              lon: -0.1,
+              typedExtensions: WptTypedExtensions(
+                garmin: GarminWptExtensions(
+                  waypointV1: GarminWaypointExtensionV1(
+                    samples: 3,
+                    expiration: DateTime.utc(2026, 1, 2, 3, 4, 5),
+                  ),
+                  trackPoint: GarminTrackPointExtension(
+                    temperature: 18.5,
+                    depth: 4.2,
+                  ),
+                  trackPointV1: GarminTrackPointExtensionV1(
+                    airTemperature: 18.5,
+                    heartRate: 142,
+                    cadence: 81,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  ];
+
+final xml = GpxWriter().asString(
+  gpx,
+  pretty: true,
+  compatibility: GpxCompatibilityMode.gpx11,
+  namespaces: GpxNamespaces.garmin,
+);
+```
 
 ### Export to KML
 

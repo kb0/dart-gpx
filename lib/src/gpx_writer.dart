@@ -2,6 +2,7 @@ import 'package:xml/xml.dart';
 
 import 'model/gpx.dart';
 import 'model/gpx_tag.dart';
+import 'model/extension/garmin_gpx_extensions.dart';
 import 'model/link.dart';
 import 'model/metadata.dart';
 import 'model/rte.dart';
@@ -218,7 +219,11 @@ class GpxWriter {
         _writeElement(builder, GpxTagV11.src, rte.src);
         _writeElement(builder, GpxTagV11.number, rte.number);
 
-        _writeExtensions(builder, rte.extensions);
+        _writeExtensions(
+          builder,
+          rte.extensions,
+          garminRouteExtension: rte.typedExtensions?.garmin?.route,
+        );
 
         for (final wpt in rte.rtepts) {
           _writePoint(builder, GpxTagV11.routePoint, wpt);
@@ -241,7 +246,11 @@ class GpxWriter {
         _writeElement(builder, GpxTagV11.src, trk.src);
         _writeElement(builder, GpxTagV11.number, trk.number);
 
-        _writeExtensions(builder, trk.extensions);
+        _writeExtensions(
+          builder,
+          trk.extensions,
+          garminTrackExtension: trk.typedExtensions?.garmin?.track,
+        );
 
         for (final trkseg in trk.trksegs) {
           builder.element(
@@ -299,7 +308,16 @@ class GpxWriter {
           _writeElement(builder, GpxTagV11.type, wpt.type);
           _writeElement(builder, GpxTagV11.sym, wpt.sym);
 
-          _writeExtensions(builder, wpt.extensions);
+          _writeExtensions(
+            builder,
+            wpt.extensions,
+            garminWaypointExtension: wpt.typedExtensions?.garmin?.waypoint,
+            garminWaypointExtensionV1: wpt.typedExtensions?.garmin?.waypointV1,
+            garminRoutePointExtension: wpt.typedExtensions?.garmin?.routePoint,
+            garminTrackPointExtension: wpt.typedExtensions?.garmin?.trackPoint,
+            garminTrackPointExtensionV1:
+                wpt.typedExtensions?.garmin?.trackPointV1,
+          );
 
           _writeLinks(builder, wpt.links);
         },
@@ -307,12 +325,358 @@ class GpxWriter {
     }
   }
 
-  void _writeExtensions(XmlBuilder builder, Map<String, Object>? value) {
-    if (value != null && value.isNotEmpty) {
+  void _writeExtensions(
+    XmlBuilder builder,
+    Map<String, Object>? value, {
+    GarminWaypointExtension? garminWaypointExtension,
+    GarminWaypointExtensionV1? garminWaypointExtensionV1,
+    GarminRouteExtension? garminRouteExtension,
+    GarminRoutePointExtension? garminRoutePointExtension,
+    GarminTrackExtension? garminTrackExtension,
+    GarminTrackPointExtension? garminTrackPointExtension,
+    GarminTrackPointExtensionV1? garminTrackPointExtensionV1,
+  }) {
+    final raw = _extensionsWithoutTypedGarmin(
+      value,
+      garminWaypointExtension: garminWaypointExtension,
+      garminWaypointExtensionV1: garminWaypointExtensionV1,
+      garminRouteExtension: garminRouteExtension,
+      garminRoutePointExtension: garminRoutePointExtension,
+      garminTrackExtension: garminTrackExtension,
+      garminTrackPointExtension: garminTrackPointExtension,
+      garminTrackPointExtensionV1: garminTrackPointExtensionV1,
+    );
+    final hasGarminExtension =
+        garminWaypointExtension != null ||
+        garminWaypointExtensionV1 != null ||
+        garminRouteExtension != null ||
+        garminRoutePointExtension != null ||
+        garminTrackExtension != null ||
+        garminTrackPointExtension != null ||
+        garminTrackPointExtensionV1 != null;
+
+    if (raw.isNotEmpty || hasGarminExtension) {
       builder.element(
         GpxTagV11.extensions,
         nest: () {
-          value.forEach((k, v) {
+          _writeGarminWaypointExtension(builder, garminWaypointExtension);
+          _writeGarminWaypointExtensionV1(builder, garminWaypointExtensionV1);
+          _writeGarminRouteExtension(builder, garminRouteExtension);
+          _writeGarminRoutePointExtension(builder, garminRoutePointExtension);
+          _writeGarminTrackExtension(builder, garminTrackExtension);
+          _writeGarminTrackPointExtension(builder, garminTrackPointExtension);
+          _writeGarminTrackPointExtensionV1(
+            builder,
+            garminTrackPointExtensionV1,
+          );
+
+          raw.forEach((k, v) {
+            _writeElement(builder, k, v);
+          });
+        },
+      );
+    }
+  }
+
+  Map<String, Object> _extensionsWithoutTypedGarmin(
+    Map<String, Object>? value, {
+    GarminWaypointExtension? garminWaypointExtension,
+    GarminWaypointExtensionV1? garminWaypointExtensionV1,
+    GarminRouteExtension? garminRouteExtension,
+    GarminRoutePointExtension? garminRoutePointExtension,
+    GarminTrackExtension? garminTrackExtension,
+    GarminTrackPointExtension? garminTrackPointExtension,
+    GarminTrackPointExtensionV1? garminTrackPointExtensionV1,
+  }) {
+    if (value == null || value.isEmpty) {
+      return const {};
+    }
+
+    final skippedNames = <String>{
+      if (garminWaypointExtension != null) 'gpxx:WaypointExtension',
+      if (garminWaypointExtensionV1 != null) 'wptx1:WaypointExtension',
+      if (garminRouteExtension != null) 'gpxx:RouteExtension',
+      if (garminRoutePointExtension != null) 'gpxx:RoutePointExtension',
+      if (garminTrackExtension != null) 'gpxx:TrackExtension',
+      if (garminTrackPointExtension != null) 'gpxx:TrackPointExtension',
+      if (garminTrackPointExtensionV1 != null) 'gpxtpx:TrackPointExtension',
+    };
+    final skippedLocalNames = <String>{
+      if (garminWaypointExtension != null) 'WaypointExtension',
+      if (garminWaypointExtensionV1 != null) 'WaypointExtension',
+      if (garminRouteExtension != null) 'RouteExtension',
+      if (garminRoutePointExtension != null) 'RoutePointExtension',
+      if (garminTrackExtension != null) 'TrackExtension',
+      if (garminTrackPointExtension != null ||
+          garminTrackPointExtensionV1 != null)
+        'TrackPointExtension',
+    };
+
+    return Map.fromEntries(
+      value.entries.where((entry) {
+        if (entry.key.contains(':')) {
+          return !skippedNames.contains(entry.key);
+        }
+
+        final localName = _localName(entry.key);
+        return !skippedLocalNames.contains(localName);
+      }),
+    );
+  }
+
+  void _writeGarminWaypointExtension(
+    XmlBuilder builder,
+    GarminWaypointExtension? extension,
+  ) {
+    if (extension == null) {
+      return;
+    }
+
+    builder.element(
+      'gpxx:WaypointExtension',
+      nest: () {
+        _writeElement(builder, 'gpxx:Proximity', extension.proximity);
+        _writeElement(builder, 'gpxx:Temperature', extension.temperature);
+        _writeElement(builder, 'gpxx:Depth', extension.depth);
+        _writeElement(
+          builder,
+          'gpxx:DisplayMode',
+          extension.displayMode?.value,
+        );
+        if (extension.categories.isNotEmpty) {
+          builder.element(
+            'gpxx:Categories',
+            nest: () {
+              for (final category in extension.categories) {
+                _writeElement(builder, 'gpxx:Category', category);
+              }
+            },
+          );
+        }
+        _writeGarminAddress(builder, extension.address);
+        for (final phoneNumber in extension.phoneNumbers) {
+          builder.element(
+            'gpxx:PhoneNumber',
+            nest: () {
+              _writeAttribute(builder, 'Category', phoneNumber.category);
+              builder.text(phoneNumber.number ?? '');
+            },
+          );
+        }
+        _writeGarminNestedExtensions(builder, 'gpxx', extension.extensions);
+      },
+    );
+  }
+
+  void _writeGarminAddress(XmlBuilder builder, GarminAddress? address) {
+    if (address == null) {
+      return;
+    }
+
+    builder.element(
+      'gpxx:Address',
+      nest: () {
+        for (final streetAddress in address.streetAddresses) {
+          _writeElement(builder, 'gpxx:StreetAddress', streetAddress);
+        }
+        _writeElement(builder, 'gpxx:City', address.city);
+        _writeElement(builder, 'gpxx:State', address.state);
+        _writeElement(builder, 'gpxx:Country', address.country);
+        _writeElement(builder, 'gpxx:PostalCode', address.postalCode);
+        _writeGarminNestedExtensions(builder, 'gpxx', address.extensions);
+      },
+    );
+  }
+
+  void _writeGarminWaypointExtensionV1(
+    XmlBuilder builder,
+    GarminWaypointExtensionV1? extension,
+  ) {
+    if (extension == null) {
+      return;
+    }
+
+    builder.element(
+      'wptx1:WaypointExtension',
+      nest: () {
+        _writeElement(builder, 'wptx1:Proximity', extension.proximity);
+        _writeElement(builder, 'wptx1:Temperature', extension.temperature);
+        _writeElement(builder, 'wptx1:Depth', extension.depth);
+        _writeElement(
+          builder,
+          'wptx1:DisplayMode',
+          extension.displayMode?.value,
+        );
+        if (extension.categories.isNotEmpty) {
+          builder.element(
+            'wptx1:Categories',
+            nest: () {
+              for (final category in extension.categories) {
+                _writeElement(builder, 'wptx1:Category', category);
+              }
+            },
+          );
+        }
+        _writeGarminAddressV1(builder, extension.address);
+        for (final phoneNumber in extension.phoneNumbers) {
+          builder.element(
+            'wptx1:PhoneNumber',
+            nest: () {
+              _writeAttribute(builder, 'Category', phoneNumber.category);
+              builder.text(phoneNumber.number ?? '');
+            },
+          );
+        }
+        _writeElement(builder, 'wptx1:Samples', extension.samples);
+        _writeElementWithTime(
+          builder,
+          'wptx1:Expiration',
+          extension.expiration,
+        );
+        _writeGarminNestedExtensions(builder, 'wptx1', extension.extensions);
+      },
+    );
+  }
+
+  void _writeGarminAddressV1(XmlBuilder builder, GarminAddress? address) {
+    if (address == null) {
+      return;
+    }
+
+    builder.element(
+      'wptx1:Address',
+      nest: () {
+        for (final streetAddress in address.streetAddresses) {
+          _writeElement(builder, 'wptx1:StreetAddress', streetAddress);
+        }
+        _writeElement(builder, 'wptx1:City', address.city);
+        _writeElement(builder, 'wptx1:State', address.state);
+        _writeElement(builder, 'wptx1:Country', address.country);
+        _writeElement(builder, 'wptx1:PostalCode', address.postalCode);
+        _writeGarminNestedExtensions(builder, 'wptx1', address.extensions);
+      },
+    );
+  }
+
+  void _writeGarminRouteExtension(
+    XmlBuilder builder,
+    GarminRouteExtension? extension,
+  ) {
+    if (extension == null) {
+      return;
+    }
+
+    builder.element(
+      'gpxx:RouteExtension',
+      nest: () {
+        _writeElement(builder, 'gpxx:IsAutoNamed', extension.isAutoNamed);
+        _writeElement(
+          builder,
+          'gpxx:DisplayColor',
+          extension.displayColor?.value,
+        );
+        _writeGarminNestedExtensions(builder, 'gpxx', extension.extensions);
+      },
+    );
+  }
+
+  void _writeGarminRoutePointExtension(
+    XmlBuilder builder,
+    GarminRoutePointExtension? extension,
+  ) {
+    if (extension == null) {
+      return;
+    }
+
+    builder.element(
+      'gpxx:RoutePointExtension',
+      nest: () {
+        _writeElement(builder, 'gpxx:Subclass', extension.subclass);
+        for (final routePoint in extension.routePoints) {
+          builder.element(
+            'gpxx:rpt',
+            nest: () {
+              _writeAttribute(builder, GpxTagV11.latitude, routePoint.lat);
+              _writeAttribute(builder, GpxTagV11.longitude, routePoint.lon);
+              _writeElement(builder, 'gpxx:Subclass', routePoint.subclass);
+            },
+          );
+        }
+        _writeGarminNestedExtensions(builder, 'gpxx', extension.extensions);
+      },
+    );
+  }
+
+  void _writeGarminTrackExtension(
+    XmlBuilder builder,
+    GarminTrackExtension? extension,
+  ) {
+    if (extension == null) {
+      return;
+    }
+
+    builder.element(
+      'gpxx:TrackExtension',
+      nest: () {
+        _writeElement(
+          builder,
+          'gpxx:DisplayColor',
+          extension.displayColor?.value,
+        );
+        _writeGarminNestedExtensions(builder, 'gpxx', extension.extensions);
+      },
+    );
+  }
+
+  void _writeGarminTrackPointExtension(
+    XmlBuilder builder,
+    GarminTrackPointExtension? extension,
+  ) {
+    if (extension == null) {
+      return;
+    }
+
+    builder.element(
+      'gpxx:TrackPointExtension',
+      nest: () {
+        _writeElement(builder, 'gpxx:Temperature', extension.temperature);
+        _writeElement(builder, 'gpxx:Depth', extension.depth);
+        _writeGarminNestedExtensions(builder, 'gpxx', extension.extensions);
+      },
+    );
+  }
+
+  void _writeGarminTrackPointExtensionV1(
+    XmlBuilder builder,
+    GarminTrackPointExtensionV1? extension,
+  ) {
+    if (extension == null) {
+      return;
+    }
+
+    builder.element(
+      'gpxtpx:TrackPointExtension',
+      nest: () {
+        _writeElement(builder, 'gpxtpx:atemp', extension.airTemperature);
+        _writeElement(builder, 'gpxtpx:wtemp', extension.waterTemperature);
+        _writeElement(builder, 'gpxtpx:depth', extension.depth);
+        _writeElement(builder, 'gpxtpx:hr', extension.heartRate);
+        _writeElement(builder, 'gpxtpx:cad', extension.cadence);
+        _writeGarminNestedExtensions(builder, 'gpxtpx', extension.extensions);
+      },
+    );
+  }
+
+  void _writeGarminNestedExtensions(
+    XmlBuilder builder,
+    String prefix,
+    Map<String, Object> extensions,
+  ) {
+    if (extensions.isNotEmpty) {
+      builder.element(
+        '$prefix:Extensions',
+        nest: () {
+          extensions.forEach((k, v) {
             _writeElement(builder, k, v);
           });
         },
@@ -347,6 +711,10 @@ class GpxWriter {
             });
           },
         );
+      } else if (value is Iterable) {
+        for (final item in value) {
+          _writeElement(builder, tagName, item);
+        }
       } else {
         builder.element(tagName, nest: value);
       }
@@ -367,5 +735,10 @@ class GpxWriter {
     if (value != null) {
       builder.element(tagName, nest: value.toUtc().toIso8601String());
     }
+  }
+
+  String _localName(String name) {
+    final separatorIndex = name.indexOf(':');
+    return separatorIndex == -1 ? name : name.substring(separatorIndex + 1);
   }
 }

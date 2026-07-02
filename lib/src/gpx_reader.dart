@@ -3,6 +3,8 @@ import 'package:xml/xml_events.dart';
 import 'model/bounds.dart';
 import 'model/copyright.dart';
 import 'model/email.dart';
+import 'model/extension/garmin_gpx_extensions.dart';
+import 'model/extension/typed_extensions.dart';
 import 'model/gpx.dart';
 import 'model/gpx_tag.dart';
 import 'model/link.dart';
@@ -177,6 +179,7 @@ class GpxReader {
 
             case GpxTagV11.extensions:
               rte.extensions = _readExtensions(iterator);
+              rte.typedExtensions = _readRteTypedExtensions(rte.extensions);
               break;
           }
         }
@@ -230,6 +233,7 @@ class GpxReader {
 
             case GpxTagV11.extensions:
               trk.extensions = _readExtensions(iterator);
+              trk.typedExtensions = _readTrkTypedExtensions(trk.extensions);
               break;
           }
         }
@@ -338,6 +342,7 @@ class GpxReader {
               break;
             case GpxTagV11.extensions:
               wpt.extensions = _readExtensions(iterator);
+              wpt.typedExtensions = _readWptTypedExtensions(wpt.extensions);
               break;
           }
         }
@@ -403,12 +408,25 @@ class GpxReader {
     }
 
     final valueMap = <String, Object>{};
+    if (elm.attributes.isNotEmpty) {
+      valueMap['@attributes'] = <String, Object>{
+        for (final attribute in elm.attributes) attribute.name: attribute.value,
+      };
+    }
     String? valueText;
     while (iterator.moveNext()) {
       final val = iterator.current;
 
       if (val is XmlStartElementEvent) {
-        valueMap[val.name] = _readMap(iterator, val.name) ?? {};
+        final value = _readMap(iterator, val.name) ?? {};
+        final existingValue = valueMap[val.name];
+        if (existingValue == null) {
+          valueMap[val.name] = value;
+        } else if (existingValue is List<Object>) {
+          existingValue.add(value);
+        } else {
+          valueMap[val.name] = [existingValue, value];
+        }
       }
 
       if (val is XmlTextEvent) {
@@ -424,7 +442,14 @@ class GpxReader {
       }
     }
 
-    return valueMap.isNotEmpty ? valueMap : valueText;
+    if (valueMap.isNotEmpty) {
+      if (valueText != null && valueText.trim().isNotEmpty) {
+        valueMap['#text'] = valueText;
+      }
+      return valueMap;
+    }
+
+    return valueText;
   }
 
   Trkseg _readSegment(Iterator<XmlEvent> iterator) {
@@ -458,6 +483,375 @@ class GpxReader {
   Map<String, Object> _readExtensions(Iterator<XmlEvent> iterator) {
     final exts = _readMap(iterator, GpxTagV11.extensions) ?? {};
     return (exts is Map<String, Object>) ? exts : {};
+  }
+
+  WptTypedExtensions? _readWptTypedExtensions(Map<String, Object> extensions) {
+    final garmin = GarminWptExtensions(
+      waypoint: _readGarminWaypointExtension(extensions),
+      waypointV1: _readGarminWaypointExtensionV1(extensions),
+      routePoint: _readGarminRoutePointExtension(extensions),
+      trackPoint: _readGarminTrackPointExtension(extensions),
+      trackPointV1: _readGarminTrackPointExtensionV1(extensions),
+    );
+
+    return garmin.isEmpty ? null : WptTypedExtensions(garmin: garmin);
+  }
+
+  RteTypedExtensions? _readRteTypedExtensions(Map<String, Object> extensions) {
+    final garmin = GarminRteExtensions(
+      route: _readGarminRouteExtension(extensions),
+    );
+
+    return garmin.isEmpty ? null : RteTypedExtensions(garmin: garmin);
+  }
+
+  TrkTypedExtensions? _readTrkTypedExtensions(Map<String, Object> extensions) {
+    final garmin = GarminTrkExtensions(
+      track: _readGarminTrackExtension(extensions),
+    );
+
+    return garmin.isEmpty ? null : TrkTypedExtensions(garmin: garmin);
+  }
+
+  GarminWaypointExtension? _readGarminWaypointExtension(
+    Map<String, Object> extensions,
+  ) {
+    final value = _readGarminExtensionMap(
+      extensions,
+      'WaypointExtension',
+      qualifiedName: 'gpxx:WaypointExtension',
+    );
+    if (value == null) {
+      return null;
+    }
+
+    return GarminWaypointExtension(
+      proximity: _doubleValue(value, 'Proximity'),
+      temperature: _doubleValue(value, 'Temperature'),
+      depth: _doubleValue(value, 'Depth'),
+      displayMode: GarminDisplayMode.fromString(
+        _stringValue(value, 'DisplayMode'),
+      ),
+      categories: _stringValues(
+        _readGarminExtensionMap(value, 'Categories') ?? const {},
+        'Category',
+      ),
+      address: _readGarminAddress(value),
+      phoneNumbers: _readGarminPhoneNumbers(value),
+      extensions: _readGarminNestedExtensions(value),
+    );
+  }
+
+  GarminAddress? _readGarminAddress(Map<String, Object> extension) {
+    final value = _readGarminExtensionMap(extension, 'Address');
+    if (value == null) {
+      return null;
+    }
+
+    return GarminAddress(
+      streetAddresses: _stringValues(value, 'StreetAddress'),
+      city: _stringValue(value, 'City'),
+      state: _stringValue(value, 'State'),
+      country: _stringValue(value, 'Country'),
+      postalCode: _stringValue(value, 'PostalCode'),
+      extensions: _readGarminNestedExtensions(value),
+    );
+  }
+
+  GarminWaypointExtensionV1? _readGarminWaypointExtensionV1(
+    Map<String, Object> extensions,
+  ) {
+    final value = _readGarminExtensionMap(
+      extensions,
+      'WaypointExtension',
+      qualifiedName: 'wptx1:WaypointExtension',
+    );
+    if (value == null) {
+      return null;
+    }
+
+    return GarminWaypointExtensionV1(
+      proximity: _doubleValue(value, 'Proximity'),
+      temperature: _doubleValue(value, 'Temperature'),
+      depth: _doubleValue(value, 'Depth'),
+      displayMode: GarminDisplayMode.fromString(
+        _stringValue(value, 'DisplayMode'),
+      ),
+      categories: _stringValues(
+        _readGarminExtensionMap(value, 'Categories') ?? const {},
+        'Category',
+      ),
+      address: _readGarminAddress(value),
+      phoneNumbers: _readGarminPhoneNumbers(value),
+      samples: _intValue(value, 'Samples'),
+      expiration: _dateTimeValue(value, 'Expiration'),
+      extensions: _readGarminNestedExtensions(value),
+    );
+  }
+
+  List<GarminPhoneNumber> _readGarminPhoneNumbers(
+    Map<String, Object> extension,
+  ) {
+    final value = _valueByLocalName(extension, 'PhoneNumber');
+    if (value == null) {
+      return [];
+    }
+
+    final values = value is List<Object> ? value : [value];
+    return values.map((phoneNumber) {
+      if (phoneNumber is Map<String, Object>) {
+        return GarminPhoneNumber(
+          number: _textValue(phoneNumber),
+          category: _attributeValue(phoneNumber, 'Category'),
+        );
+      }
+
+      return GarminPhoneNumber(number: phoneNumber.toString());
+    }).toList();
+  }
+
+  GarminRouteExtension? _readGarminRouteExtension(
+    Map<String, Object> extensions,
+  ) {
+    final value = _readGarminExtensionMap(
+      extensions,
+      'RouteExtension',
+      qualifiedName: 'gpxx:RouteExtension',
+    );
+    if (value == null) {
+      return null;
+    }
+
+    return GarminRouteExtension(
+      isAutoNamed: _boolValue(value, 'IsAutoNamed') ?? false,
+      displayColor: GarminDisplayColor.fromString(
+        _stringValue(value, 'DisplayColor'),
+      ),
+      extensions: _readGarminNestedExtensions(value),
+    );
+  }
+
+  GarminRoutePointExtension? _readGarminRoutePointExtension(
+    Map<String, Object> extensions,
+  ) {
+    final value = _readGarminExtensionMap(
+      extensions,
+      'RoutePointExtension',
+      qualifiedName: 'gpxx:RoutePointExtension',
+    );
+    if (value == null) {
+      return null;
+    }
+
+    return GarminRoutePointExtension(
+      subclass: _stringValue(value, 'Subclass'),
+      routePoints: _readGarminAutoroutePoints(value),
+      extensions: _readGarminNestedExtensions(value),
+    );
+  }
+
+  List<GarminAutoroutePoint> _readGarminAutoroutePoints(
+    Map<String, Object> extension,
+  ) {
+    final value = _valueByLocalName(extension, 'rpt');
+    if (value == null) {
+      return [];
+    }
+
+    final values = value is List<Object> ? value : [value];
+    return values
+        .whereType<Map<String, Object>>()
+        .map(
+          (routePoint) => GarminAutoroutePoint(
+            lat: _doubleAttributeValue(routePoint, GpxTagV11.latitude),
+            lon: _doubleAttributeValue(routePoint, GpxTagV11.longitude),
+            subclass: _stringValue(routePoint, 'Subclass'),
+          ),
+        )
+        .toList();
+  }
+
+  GarminTrackExtension? _readGarminTrackExtension(
+    Map<String, Object> extensions,
+  ) {
+    final value = _readGarminExtensionMap(
+      extensions,
+      'TrackExtension',
+      qualifiedName: 'gpxx:TrackExtension',
+    );
+    if (value == null) {
+      return null;
+    }
+
+    return GarminTrackExtension(
+      displayColor: GarminDisplayColor.fromString(
+        _stringValue(value, 'DisplayColor'),
+      ),
+      extensions: _readGarminNestedExtensions(value),
+    );
+  }
+
+  GarminTrackPointExtension? _readGarminTrackPointExtension(
+    Map<String, Object> extensions,
+  ) {
+    final value = _readGarminExtensionMap(
+      extensions,
+      'TrackPointExtension',
+      qualifiedName: 'gpxx:TrackPointExtension',
+    );
+    if (value == null) {
+      return null;
+    }
+
+    return GarminTrackPointExtension(
+      temperature: _doubleValue(value, 'Temperature'),
+      depth: _doubleValue(value, 'Depth'),
+      extensions: _readGarminNestedExtensions(value),
+    );
+  }
+
+  GarminTrackPointExtensionV1? _readGarminTrackPointExtensionV1(
+    Map<String, Object> extensions,
+  ) {
+    final value = _readGarminExtensionMap(
+      extensions,
+      'TrackPointExtension',
+      qualifiedName: 'gpxtpx:TrackPointExtension',
+    );
+    if (value == null) {
+      return null;
+    }
+
+    return GarminTrackPointExtensionV1(
+      airTemperature: _doubleValue(value, 'atemp'),
+      waterTemperature: _doubleValue(value, 'wtemp'),
+      depth: _doubleValue(value, 'depth'),
+      heartRate: _intValue(value, 'hr'),
+      cadence: _intValue(value, 'cad'),
+      extensions: _readGarminNestedExtensions(value),
+    );
+  }
+
+  Map<String, Object> _readGarminNestedExtensions(
+    Map<String, Object> extension,
+  ) => _readGarminExtensionMap(extension, 'Extensions') ?? <String, Object>{};
+
+  Map<String, Object>? _readGarminExtensionMap(
+    Map<String, Object> extensions,
+    String localName, {
+    String? qualifiedName,
+  }) {
+    final value = qualifiedName != null
+        ? _valueByQualifiedOrLocalName(extensions, qualifiedName, localName)
+        : _valueByLocalName(extensions, localName);
+    return value is Map<String, Object> ? value : null;
+  }
+
+  Object? _valueByQualifiedOrLocalName(
+    Map<String, Object> map,
+    String qualifiedName,
+    String localName,
+  ) {
+    final value = map[qualifiedName];
+    if (value != null) {
+      return value;
+    }
+
+    return map[localName];
+  }
+
+  Object? _valueByLocalName(Map<String, Object> map, String localName) {
+    for (final entry in map.entries) {
+      if (_localName(entry.key) == localName) {
+        return entry.value;
+      }
+    }
+
+    return null;
+  }
+
+  double? _doubleValue(Map<String, Object> map, String localName) {
+    final value = _stringValue(map, localName);
+    return value != null ? double.parse(value) : null;
+  }
+
+  int? _intValue(Map<String, Object> map, String localName) {
+    final value = _stringValue(map, localName);
+    return value != null ? int.parse(value) : null;
+  }
+
+  bool? _boolValue(Map<String, Object> map, String localName) {
+    final value = _stringValue(map, localName);
+    return value != null ? value.toLowerCase() == 'true' : null;
+  }
+
+  DateTime? _dateTimeValue(Map<String, Object> map, String localName) {
+    final value = _stringValue(map, localName);
+    return value != null ? DateTime.parse(value) : null;
+  }
+
+  String? _stringValue(Map<String, Object> map, String localName) {
+    final value = _valueByLocalName(map, localName);
+    if (value is String) {
+      return value;
+    }
+    if (value is Map<String, Object>) {
+      return _textValue(value);
+    }
+
+    return null;
+  }
+
+  List<String> _stringValues(Map<String, Object> map, String localName) {
+    final value = _valueByLocalName(map, localName);
+    if (value is String) {
+      return [value];
+    }
+    if (value is Map<String, Object>) {
+      final text = _textValue(value);
+      return text != null ? [text] : [];
+    }
+    if (value is List<Object>) {
+      return value
+          .map((item) {
+            if (item is String) {
+              return item;
+            }
+            if (item is Map<String, Object>) {
+              return _textValue(item);
+            }
+            return null;
+          })
+          .whereType<String>()
+          .toList();
+    }
+
+    return [];
+  }
+
+  String? _textValue(Map<String, Object> map) {
+    final value = map['#text'];
+    return value is String ? value : null;
+  }
+
+  double? _doubleAttributeValue(Map<String, Object> map, String attributeName) {
+    final value = _attributeValue(map, attributeName);
+    return value != null ? double.parse(value) : null;
+  }
+
+  String? _attributeValue(Map<String, Object> map, String attributeName) {
+    final attributes = map['@attributes'];
+    if (attributes is Map<String, Object>) {
+      final value = attributes[attributeName];
+      return value is String ? value : null;
+    }
+
+    return null;
+  }
+
+  String _localName(String name) {
+    final separatorIndex = name.indexOf(':');
+    return separatorIndex == -1 ? name : name.substring(separatorIndex + 1);
   }
 
   Link _readLink(Iterator<XmlEvent> iterator) {

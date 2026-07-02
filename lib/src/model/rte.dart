@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 
+import 'extension/typed_extensions.dart';
 import 'link.dart';
 import 'wpt.dart';
 
@@ -32,6 +33,9 @@ class Rte {
   /// here.
   Map<String, Object> extensions;
 
+  /// Typed wrappers for known GPX extensions.
+  RteTypedExtensions? typedExtensions;
+
   /// A list of route points.
   List<Wpt> rtepts;
 
@@ -45,6 +49,7 @@ class Rte {
     this.number,
     this.type,
     Map<String, Object>? extensions,
+    this.typedExtensions,
     List<Wpt>? rtepts,
   }) : links = links ?? [],
        extensions = extensions ?? <String, Object>{},
@@ -62,6 +67,7 @@ class Rte {
           other.number == number &&
           other.type == type &&
           const DeepCollectionEquality().equals(other.extensions, extensions) &&
+          other.typedExtensions == typedExtensions &&
           const ListEquality().equals(other.rtepts, rtepts);
     }
 
@@ -82,6 +88,7 @@ class Rte {
     type,
     ...extensions.keys,
     ...extensions.values,
+    typedExtensions,
     ...rtepts,
   ]);
 }

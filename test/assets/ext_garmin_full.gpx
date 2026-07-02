@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:wptx1="http://www.garmin.com/xmlschemas/WaypointExtension/v1" version="1.1" creator="test">
+<wpt lat="1.0" lon="2.0">
+<extensions>
+<gpxx:WaypointExtension>
+<gpxx:Proximity>100.0</gpxx:Proximity>
+<gpxx:Temperature>18.5</gpxx:Temperature>
+<gpxx:Depth>4.2</gpxx:Depth>
+<gpxx:DisplayMode>SymbolAndName</gpxx:DisplayMode>
+<gpxx:Categories>
+<gpxx:Category>Food</gpxx:Category>
+<gpxx:Category>Favorites</gpxx:Category>
+</gpxx:Categories>
+<gpxx:Address>
+<gpxx:StreetAddress>1 Main St</gpxx:StreetAddress>
+<gpxx:StreetAddress>Suite 2</gpxx:StreetAddress>
+<gpxx:City>London</gpxx:City>
+<gpxx:State>London</gpxx:State>
+<gpxx:Country>GB</gpxx:Country>
+<gpxx:PostalCode>SW1A</gpxx:PostalCode>
+</gpxx:Address>
+<gpxx:PhoneNumber Category="Work">+440000000</gpxx:PhoneNumber>
+</gpxx:WaypointExtension>
+<wptx1:WaypointExtension>
+<wptx1:Proximity>101.0</wptx1:Proximity>
+<wptx1:Temperature>19.5</wptx1:Temperature>
+<wptx1:Depth>5.2</wptx1:Depth>
+<wptx1:DisplayMode>SymbolAndDescription</wptx1:DisplayMode>
+<wptx1:Categories>
+<wptx1:Category>Trailhead</wptx1:Category>
+</wptx1:Categories>
+<wptx1:Address>
+<wptx1:StreetAddress>2 Main St</wptx1:StreetAddress>
+<wptx1:City>Paris</wptx1:City>
+<wptx1:Country>FR</wptx1:Country>
+</wptx1:Address>
+<wptx1:PhoneNumber Category="Mobile">+330000000</wptx1:PhoneNumber>
+<wptx1:Samples>3</wptx1:Samples>
+<wptx1:Expiration>2026-01-02T03:04:05Z</wptx1:Expiration>
+</wptx1:WaypointExtension>
+</extensions>
+</wpt>
+<rte>
+<extensions>
+<gpxx:RouteExtension>
+<gpxx:IsAutoNamed>false</gpxx:IsAutoNamed>
+<gpxx:DisplayColor>Blue</gpxx:DisplayColor>
+</gpxx:RouteExtension>
+</extensions>
+<rtept lat="3.0" lon="4.0">
+<extensions>
+<gpxx:RoutePointExtension>
+<gpxx:Subclass>000000000000000000</gpxx:Subclass>
+<gpxx:rpt lat="3.1" lon="4.1">
+<gpxx:Subclass>111111111111111111</gpxx:Subclass>
+</gpxx:rpt>
+</gpxx:RoutePointExtension>
+</extensions>
+</rtept>
+</rte>
+<trk>
+<extensions>
+<gpxx:TrackExtension>
+<gpxx:DisplayColor>DarkRed</gpxx:DisplayColor>
+</gpxx:TrackExtension>
+</extensions>
+<trkseg>
+<trkpt lat="5.0" lon="6.0">
+<extensions>
+<gpxx:TrackPointExtension>
+<gpxx:Temperature>10.5</gpxx:Temperature>
+<gpxx:Depth>2.5</gpxx:Depth>
+</gpxx:TrackPointExtension>
+<gpxtpx:TrackPointExtension>
+<gpxtpx:atemp>11.5</gpxtpx:atemp>
+<gpxtpx:wtemp>7.5</gpxtpx:wtemp>
+<gpxtpx:depth>3.5</gpxtpx:depth>
+<gpxtpx:hr>142</gpxtpx:hr>
+<gpxtpx:cad>81</gpxtpx:cad>
+</gpxtpx:TrackPointExtension>
+</extensions>
+</trkpt>
+</trkseg>
+</trk>
+</gpx>
