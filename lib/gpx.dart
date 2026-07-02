@@ -4,6 +4,8 @@ export 'src/kml_writer.dart';
 export 'src/model/bounds.dart';
 export 'src/model/copyright.dart';
 export 'src/model/email.dart';
+export 'src/model/extension/garmin_gpx_extensions.dart';
+export 'src/model/extension/typed_extensions.dart';
 export 'src/model/gpx.dart';
 export 'src/model/link.dart';
 export 'src/model/metadata.dart';

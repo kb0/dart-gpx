@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 
+import 'extension/typed_extensions.dart';
 import 'link.dart';
 
 enum FixType { fix_2d, fix_3d, dgps, none, pps, unknown }
@@ -80,6 +81,9 @@ class Wpt {
   /// here.
   Map<String, Object> extensions;
 
+  /// Typed wrappers for known GPX extensions.
+  WptTypedExtensions? typedExtensions;
+
   /// Construct a new [Wpt] object.
   Wpt({
     this.lat = 0.0,
@@ -103,6 +107,7 @@ class Wpt {
     this.ageofdgpsdata,
     this.dgpsid,
     Map<String, Object>? extensions,
+    this.typedExtensions,
   }) : links = links ?? [],
        extensions = extensions ?? <String, Object>{};
 
@@ -130,7 +135,8 @@ class Wpt {
           other.pdop == pdop &&
           other.ageofdgpsdata == ageofdgpsdata &&
           other.dgpsid == dgpsid &&
-          const DeepCollectionEquality().equals(other.extensions, extensions);
+          const DeepCollectionEquality().equals(other.extensions, extensions) &&
+          other.typedExtensions == typedExtensions;
     }
 
     return false;
@@ -164,5 +170,6 @@ class Wpt {
     dgpsid,
     ...extensions.keys,
     ...extensions.values,
+    typedExtensions,
   ]);
 }

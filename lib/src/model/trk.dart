@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 
+import 'extension/typed_extensions.dart';
 import 'link.dart';
 import 'trkseg.dart';
 
@@ -31,6 +32,9 @@ class Trk {
   /// here.
   Map<String, Object> extensions;
 
+  /// Typed wrappers for known GPX extensions.
+  TrkTypedExtensions? typedExtensions;
+
   /// A Track Segment holds a list of Track Points which are logically connected
   /// in order. To represent a single GPS track where GPS reception was lost, or
   /// the GPS receiver was turned off, start a new Track Segment for each
@@ -47,6 +51,7 @@ class Trk {
     this.number,
     this.type,
     Map<String, Object>? extensions,
+    this.typedExtensions,
     List<Trkseg>? trksegs,
   }) : links = links ?? [],
        extensions = extensions ?? <String, Object>{},
@@ -64,6 +69,7 @@ class Trk {
           other.number == number &&
           other.type == type &&
           const DeepCollectionEquality().equals(other.extensions, extensions) &&
+          other.typedExtensions == typedExtensions &&
           const ListEquality().equals(other.trksegs, trksegs);
     }
 
@@ -84,6 +90,7 @@ class Trk {
     ...links,
     ...extensions.keys,
     ...extensions.values,
+    typedExtensions,
     ...trksegs,
   ]);
 }
