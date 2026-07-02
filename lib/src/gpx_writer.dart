@@ -8,35 +8,61 @@ import 'model/rte.dart';
 import 'model/trk.dart';
 import 'model/wpt.dart';
 
+/// Built-in GPX writer compatibility presets.
+enum GpxCompatibilityMode {
+  /// Keep the historical writer output unchanged.
+  legacy,
+
+  /// Add standard GPX 1.1 namespace and schema declarations.
+  gpx11,
+}
+
 /// Convert Gpx into GPX
 class GpxWriter {
+  static const _gpx11Namespace = 'http://www.topografix.com/GPX/1/1';
+  static const _xmlSchemaInstanceNamespace =
+      'http://www.w3.org/2001/XMLSchema-instance';
+  static const _gpx11SchemaLocation =
+      'http://www.topografix.com/GPX/1/1 '
+      'http://www.topografix.com/GPX/1/1/gpx.xsd';
+
   /// Convert Gpx into GPX XML (v1.1) as String
   String asString(
     Gpx gpx, {
     bool pretty = false,
-    Map<String, String?> namespaces = const {},
+    GpxCompatibilityMode compatibility = GpxCompatibilityMode.legacy,
+    Map<String?, String?> namespaces = const {},
     Map<String, String> attributes = const {},
-  }) => _build(gpx, namespaces, attributes).toXmlString(pretty: pretty);
+  }) => _build(
+    gpx,
+    compatibility,
+    namespaces,
+    attributes,
+  ).toXmlString(pretty: pretty);
 
   /// Convert Gpx into GPX XML (v1.1) as XmlNode
   XmlNode asXml(
     Gpx gpx, {
-    Map<String, String?> namespaces = const {},
+    GpxCompatibilityMode compatibility = GpxCompatibilityMode.legacy,
+    Map<String?, String?> namespaces = const {},
     Map<String, String> attributes = const {},
-  }) => _build(gpx, namespaces, attributes);
+  }) => _build(gpx, compatibility, namespaces, attributes);
 
   XmlNode _build(
     Gpx gpx,
-    Map<String, String?> gpxNamespaces,
+    GpxCompatibilityMode compatibility,
+    Map<String?, String?> gpxNamespaces,
     Map<String, String> gpxAttributes,
   ) {
     final builder = XmlBuilder();
+    final namespaces = {..._namespacesFor(compatibility), ...gpxNamespaces};
+    final attributes = {..._attributesFor(compatibility), ...gpxAttributes};
 
     builder.processing('xml', 'version="1.0" encoding="UTF-8"');
     builder.element(
       GpxTagV11.gpx,
-      namespaceUris: gpxNamespaces,
-      attributes: gpxAttributes,
+      namespaceUris: namespaces,
+      attributes: attributes,
       nest: () {
         builder.attribute(GpxTagV11.version, gpx.version);
         builder.attribute(GpxTagV11.creator, gpx.creator);
@@ -60,6 +86,27 @@ class GpxWriter {
     );
 
     return builder.buildDocument();
+  }
+
+  Map<String?, String?> _namespacesFor(GpxCompatibilityMode compatibility) {
+    switch (compatibility) {
+      case GpxCompatibilityMode.legacy:
+        return const {};
+      case GpxCompatibilityMode.gpx11:
+        return const {
+          null: _gpx11Namespace,
+          'xsi': _xmlSchemaInstanceNamespace,
+        };
+    }
+  }
+
+  Map<String, String> _attributesFor(GpxCompatibilityMode compatibility) {
+    switch (compatibility) {
+      case GpxCompatibilityMode.legacy:
+        return const {};
+      case GpxCompatibilityMode.gpx11:
+        return const {'xsi:schemaLocation': _gpx11SchemaLocation};
+    }
   }
 
   void _writeMetadata(XmlBuilder builder, Metadata metadata) {

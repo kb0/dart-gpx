@@ -78,8 +78,58 @@ void main() {
     },
   );
   print(gpxString2);
+
+  // generate GPX 1.1-compatible xml string with standard namespaces
+  final gpxString3 = GpxWriter().asString(
+    gpx,
+    pretty: true,
+    compatibility: GpxCompatibilityMode.gpx11,
+  );
+  print(gpxString3);
 }
 ```
+
+### Compatibility with strict GPX parsers
+
+Some GPX applications expect the standard GPX 1.1 namespace and schema declarations on the root `<gpx>` element. Use
+`GpxCompatibilityMode.gpx11` when writing files for applications such as EasyGPS, JPX, Garmin BaseCamp, and other strict
+GPX parsers:
+
+```dart
+final xml = GpxWriter().asString(
+  gpx,
+  pretty: true,
+  compatibility: GpxCompatibilityMode.gpx11,
+);
+```
+
+This writes a root element with the standard GPX 1.1 declarations:
+
+```xml
+<gpx xmlns="http://www.topografix.com/GPX/1/1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+    version="1.1"
+    creator="dart-gpx library">
+```
+
+For Garmin BaseCamp files that also need Garmin extension namespaces, combine
+the GPX 1.1 compatibility mode with custom namespaces:
+
+```dart
+final xml = GpxWriter().asString(
+  gpx,
+  pretty: true,
+  compatibility: GpxCompatibilityMode.gpx11,
+  namespaces: {
+    'gpxtpx': 'http://www.garmin.com/xmlschemas/TrackPointExtension/v1',
+    'gpxx': 'http://www.garmin.com/xmlschemas/GpxExtensions/v3',
+  },
+);
+```
+
+Custom `namespaces` and `attributes` are applied after the compatibility mode,
+so they can extend or override the default GPX 1.1 declarations when needed.
 
 ### Export to KML
 
