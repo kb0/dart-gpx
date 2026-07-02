@@ -1,8 +1,8 @@
 import 'package:xml/xml.dart';
 
+import 'model/extension/garmin_gpx_extensions.dart';
 import 'model/gpx.dart';
 import 'model/gpx_tag.dart';
-import 'model/extension/garmin_gpx_extensions.dart';
 import 'model/link.dart';
 import 'model/metadata.dart';
 import 'model/rte.dart';
