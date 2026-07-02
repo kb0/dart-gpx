@@ -109,4 +109,52 @@ void main() {
     );
     expectXml(str, xml);
   });
+
+  test('write gpx11 compatibility mode', () {
+    final gpx = createMinimalGPX();
+
+    final str = GpxWriter().asString(
+      gpx,
+      compatibility: GpxCompatibilityMode.gpx11,
+    );
+
+    expect(str, contains('xmlns="http://www.topografix.com/GPX/1/1"'));
+    expect(
+      str,
+      contains('xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'),
+    );
+    expect(
+      str,
+      contains(
+        'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 '
+        'http://www.topografix.com/GPX/1/1/gpx.xsd"',
+      ),
+    );
+  });
+
+  test('write custom namespaces and attributes over gpx11 defaults', () {
+    final gpx = createMinimalGPX();
+
+    final str = GpxWriter().asString(
+      gpx,
+      compatibility: GpxCompatibilityMode.gpx11,
+      namespaces: {
+        null: 'urn:custom-gpx',
+        'xsi': 'urn:custom-xsi',
+        'trp': 'http://www.garmin.com/xmlschemas/TripExtensions/v1',
+      },
+      attributes: {'xsi:schemaLocation': 'urn:custom-schema'},
+    );
+
+    expect(str, contains('xmlns="urn:custom-gpx"'));
+    expect(str, contains('xmlns:xsi="urn:custom-xsi"'));
+    expect(
+      str,
+      contains(
+        'xmlns:trp="http://www.garmin.com/xmlschemas/TripExtensions/v1"',
+      ),
+    );
+    expect(str, contains('xsi:schemaLocation="urn:custom-schema"'));
+    expect(str, isNot(contains('xmlns="http://www.topografix.com/GPX/1/1"')));
+  });
 }
