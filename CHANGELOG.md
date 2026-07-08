@@ -1,3 +1,10 @@
+## [2.5.0]
+
+* add `GpxCompatibilityMode.gpx11` for GPX 1.1 namespace/schema writer output
+* add typed Garmin `GpxExtensions/v3` reader and writer support
+* add typed Garmin `TrackPointExtension/v1` reader and writer support
+* add typed Garmin `WaypointExtension/v1` reader and writer support
+
 ## [2.4.1]
 
 * remove quiver (migrate to Object.hashAll)

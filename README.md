@@ -25,7 +25,7 @@ In your dart/flutter project add the dependency:
 ```
  dependencies:
    ...
-   gpx: ^2.4.1
+   gpx: ^2.5.0
 ```
 
 ### Reading XML
